@@ -14,7 +14,7 @@ MetaTrader 4, which supports MQL 5.
 Installation
 --------------
 
-1. Copy [MQL4/Include/UnitTest.mqh](https://raw.github.com/micclly/mt4-unittest/master/MQL4/Include/UnitTest.mqh) to ``%APPDATA%/MetaQuotes/Terminal/<ID>/MQL4/Include``
+1. Copy [MQL4/Include/UnitTest.mqh](https://github.com/undeadmouse/mt4-unittest/blob/master/MQL4/Include/UnitTest.mqh) to ``MQL4/Include``
 1. See the following usage sample, or get it from [here](https://raw.github.com/micclly/mt4-unittest/master/MQL4/Samples/TestExpert.mq4).
 
 Usage Sample
