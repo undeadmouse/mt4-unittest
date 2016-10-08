@@ -63,17 +63,17 @@ void runAllTests()
 
 void testGetMA_shoudReturnSMA()
 {
-    unittest.addTest(__FUNCTION__);
+    unittest.testCase(__FUNCTION__);
 
     const double actual = getMA(3);
     const double expected = iMA(NULL, 0, paramMAPeriod, 0, MODE_SMA, PRICE_CLOSE, 3);
 
-    unittest.assertEquals(__FUNCTION__, "MA must be SMA and 3 bars shifted", expected, actual);
+    unittest.assertEquals("MA must be SMA and 3 bars shifted", expected, actual);
 }
 
 void testGetMAArray_shoudReturnCoupleOfSMA()
 {
-    unittest.addTest(__FUNCTION__);
+    unittest.testCase(__FUNCTION__);
 
     const int shifts[] = {4, 5};
     double actual[2];
@@ -83,5 +83,5 @@ void testGetMAArray_shoudReturnCoupleOfSMA()
     expected[0] = iMA(NULL, 0, paramMAPeriod, 0, MODE_SMA, PRICE_CLOSE, 4);
     expected[1] = iMA(NULL, 0, paramMAPeriod, 0, MODE_SMA, PRICE_CLOSE, 5);
 
-    unittest.assertEquals(__FUNCTION__, "MA array must contains a couple of SMA", expected, actual);
+    unittest.assertEquals("MA array must contains a couple of SMA", expected, actual);
 }
