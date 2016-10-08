@@ -20,85 +20,25 @@ Installation
 Usage Sample
 --------------
 
-The code is same as [this](https://raw.github.com/micclly/mt4-unittest/master/MQL4/Samples/TestExpert.mq4). 
-
 ```cpp
-#property strict
+   UnitTest *unitTest=new UnitTest();
+   unitTest.testCase("simple_type");
+   unitTest.assertEquals("one should be one", 1, 1);
+   unitTest.assertEquals("str should be str", "str", "str");
+   unitTest.assertEquals("true should be true", true, true);
+   unitTest.assertEquals("char should be char", 'c', 'c');
+   unitTest.assertEquals("1.0 should be 1.0", 1.0, 1.0);
 
-// This is must be false if release version
-input bool paramUnitTesting = true;
+   unitTest.testCase("array_type");
+   int expected[2] = {1, 2};
+   int actual[2]   = {1, 2};
+   unitTest.assertEquals("array equal", expected, actual);
+   
+   unitTest.testCase("others");
+   unitTest.assertEquals("color", clrRed, clrRed);
+   unitTest.assertEquals("color", clrGray, C'128,128,128');
+   unitTest.assertEquals("datatime", D'2016.01.01 00:00', D'2016.01.01 00:00:00');
 
-input int paramMAPeriod = 13;
-
-#include <UnitTest.mqh>
-
-UnitTest* unittest;
-
-int OnInit()
-{
-    if (paramUnitTesting) {
-        unittest = new UnitTest();
-    }
-
-    return INIT_SUCCEEDED;
-}
-
-void OnDeinit(const int reason)
-{
-    if (paramUnitTesting) {
-        unittest.printSummary();
-    }
-
-    delete unittest;
-}
-
-void OnTick()
-{
-    if (paramUnitTesting) {
-        runAllTests();
-    }
-}
-
-double getMA(int shift)
-{
-    return (iMA(NULL, 0, paramMAPeriod, 0, MODE_SMA, PRICE_CLOSE, shift));
-}
-
-void getMAArray(const int& shifts[], double& mas[])
-{
-    for (int i = 0; i < ArraySize(shifts); i++) {
-        mas[i] = getMA(shifts[i]);
-    }
-}
-
-void runAllTests()
-{
-    testGetMA_shoudReturnSMA();
-    testGetMAArray_shoudReturnCoupleOfSMA();
-}
-
-void testGetMA_shoudReturnSMA()
-{
-    unittest.addTest(__FUNCTION__);
-
-    const double actual = getMA(3);
-    const double expected = iMA(NULL, 0, paramMAPeriod, 0, MODE_SMA, PRICE_CLOSE, 3);
-
-    unittest.assertEquals(__FUNCTION__, "MA must be SMA and 3 bars shifted", expected, actual);
-}
-
-void testGetMAArray_shoudReturnCoupleOfSMA()
-{
-    unittest.addTest(__FUNCTION__);
-
-    const int shifts[] = {4, 5};
-    double actual[2];
-    getMAArray(shifts, actual);
-
-    double expected[2];
-    expected[0] = iMA(NULL, 0, paramMAPeriod, 0, MODE_SMA, PRICE_CLOSE, 4);
-    expected[1] = iMA(NULL, 0, paramMAPeriod, 0, MODE_SMA, PRICE_CLOSE, 5);
-
-    unittest.assertEquals(__FUNCTION__, "MA array must contains a couple of SMA", expected, actual);
-}
+   unitTest.printSummary();
+   delete unitTest;
 ```
