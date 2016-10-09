@@ -8,7 +8,6 @@
  * This indicator is licensed under GNU GENERAL PUBLIC LICENSE Version 3.
  * See a LICENSE file for detail of the license.
  */
-#property copyright "Copyright 2014, micclly."
 #property copyright "Copyright 2016, undeadmouse."
 #property link "https://github.com/undeadmouse/mt4-unittest"
 #property strict
@@ -53,7 +52,14 @@ public:
    void              assertEquals(string message,T expected,T actual);
    template<typename T>
    void              assertEquals(string message,const T &expected[],const T &actual[]);
-
+   template<typename T>
+   static void       AssertEquals(string name,string message,T expected,T actual);
+   template<typename T>
+   static void       AssertEquals(string message,const T &expected[],const T &actual[]);
+   template<typename T>
+   static void       AssertEquals(string message,T expected,T actual);
+   template<typename T>
+   static void       AssertEquals(string name,string message,const T &expected[],const T &actual[]);
 private:
    int               m_allTestCount;
    int               m_successTestCount;
@@ -70,7 +76,7 @@ private:
 
    bool              assertArraySize(string name,string message,const int expectedSize,const int actualSize);
    template<typename T>
-   bool              isEqualTo(string type,T a,T b);
+   static bool       isEqualTo(string type,T a,T b);
   };
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -90,7 +96,7 @@ UnitTest::~UnitTest(void)
 //|                                                                  |
 //+------------------------------------------------------------------+
 template<typename T>
-bool UnitTest::isEqualTo(string type,T a,T b)
+static bool UnitTest::isEqualTo(string type,T a,T b)
   {
    if(type=="float" || type=="double")
      {
@@ -190,6 +196,25 @@ void UnitTest::setFailure(string name,string message)
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
+bool UnitTest::assertArraySize(string name,string message,const int expectedSize,const int actualSize)
+  {
+   if(expectedSize==actualSize)
+     {
+      return true;
+     }
+   else
+     {
+      const string m=message+": expected array size is <"+IntegerToString(expectedSize)+
+                     "> but <"+IntegerToString(actualSize)+">";
+      setFailure(name,m);
+      Alert("Test failed: "+name+": "+m);
+      return false;
+     }
+
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
 void UnitTest::printSummary(void)
   {
    UnitTestData *data;
@@ -259,7 +284,7 @@ void UnitTest::assertEquals(string message,const T &expected[],const T &actual[]
 
    for(int i=0; i<actualSize; i++)
      {
-      if(!isEqualTo(typename(T),expected[i],actual[i]))
+      if(!UnitTest::isEqualTo(typename(T),expected[i],actual[i]))
         {
          // for MQL4 only
          string m=StringConcatenate(message,": expected array[",(string)i,"] is <");
@@ -275,23 +300,71 @@ void UnitTest::assertEquals(string message,const T &expected[],const T &actual[]
 
   }
 //+------------------------------------------------------------------+
-//|                                                                  |
+//| Template assertEquals                                           |
 //+------------------------------------------------------------------+
-bool UnitTest::assertArraySize(string name,string message,const int expectedSize,const int actualSize)
+template<typename T>
+static void UnitTest::AssertEquals(string name,string message,T expected,T actual)
   {
-   if(expectedSize==actualSize)
+   if(UnitTest::isEqualTo(typename(T),expected,actual))
      {
-      return true;
+      PrintFormat("  %s: OK",name);
      }
    else
      {
-      const string m=message+": expected array size is <"+IntegerToString(expectedSize)+
-                     "> but <"+IntegerToString(actualSize)+">";
-      setFailure(name,m);
+      const string m=message+": expected is <"+(string)expected+
+                     "> but <"+(string)actual+">";
+      PrintFormat("  %s: NG: %s",name,m);
       Alert("Test failed: "+name+": "+m);
-      return false;
+     }
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+template<typename T>
+static void UnitTest::AssertEquals(string name,string message,const T &expected[],const T &actual[])
+  {
+//assertEquals(name,message,expected,actual);
+   const int expectedSize=ArraySize(expected);
+   const int actualSize=ArraySize(actual);
+
+   if(expectedSize!=actualSize)
+     {
+      PrintFormat("%s: NG: %s",name,"array size should be equal");
+      Alert("Test Fail: ",name,"array size should be equal");
+      return;
      }
 
+   for(int i=0; i<actualSize; i++)
+     {
+      if(!UnitTest::isEqualTo(typename(T),expected[i],actual[i]))
+        {
+         // for MQL4 only
+         string m=StringConcatenate(message,": expected array[",(string)i,"] is <");
+         m=StringConcatenate(m,(string)expected[i],"> but <",(string)actual[i],">");
+         StringConcatenate(m,message);
+         PrintFormat("%s: NG: %s",name,m);
+         Alert("Test failed: "+name+": "+m);
+         return;
+        }
+     }
+
+   PrintFormat("  %s: OK",name);
+  }
+//+------------------------------------------------------------------+
+//| Template assertEquals                                           |
+//+------------------------------------------------------------------+
+template<typename T>
+static void UnitTest::AssertEquals(string message,T expected,T actual)
+  {
+   UnitTest::AssertEquals("Test",message,expected,actual);
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+template<typename T>
+static void UnitTest::AssertEquals(string message,const T &expected[],const T &actual[])
+  {
+   UnitTest::AssertEquals("Test",message,expected,ac actual);
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
