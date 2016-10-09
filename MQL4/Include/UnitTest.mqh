@@ -1,6 +1,6 @@
 //+------------------------------------------------------------------+
 //|                                                      ProjectName |
-//|                                      Copyright 2012, CompanyName |
+//|                                      Copyright 2016, CompanyName |
 //|                                       http://www.companyname.net |
 //+------------------------------------------------------------------+
 /* -*- coding: utf-8 -*-
@@ -286,10 +286,8 @@ void UnitTest::assertEquals(string message,const T &expected[],const T &actual[]
      {
       if(!UnitTest::isEqualTo(typename(T),expected[i],actual[i]))
         {
-         // for MQL4 only
-         string m=StringConcatenate(message,": expected array[",(string)i,"] is <");
-         m=StringConcatenate(m,(string)expected[i],"> but <",(string)actual[i],">");
-         StringConcatenate(m,message);
+         string m=message + ": expected array[" + (string)i + "] is <";
+         m= m + (string)expected[i] + "> but <" + (string)actual[i] + ">";
          setFailure(name,m);
          Alert("Test failed: "+name+": "+m);
          return;
@@ -338,10 +336,8 @@ static void UnitTest::AssertEquals(string name,string message,const T &expected[
      {
       if(!UnitTest::isEqualTo(typename(T),expected[i],actual[i]))
         {
-         // for MQL4 only
-         string m=StringConcatenate(message,": expected array[",(string)i,"] is <");
-         m=StringConcatenate(m,(string)expected[i],"> but <",(string)actual[i],">");
-         StringConcatenate(m,message);
+         string m=message + ": expected array[" + (string)i + "] is <";
+         m=m + (string)expected[i] + "> but <" + (string)actual[i] + ">";
          PrintFormat("%s: NG: %s",name,m);
          Alert("Test failed: "+name+": "+m);
          return;
@@ -364,7 +360,7 @@ static void UnitTest::AssertEquals(string message,T expected,T actual)
 template<typename T>
 static void UnitTest::AssertEquals(string message,const T &expected[],const T &actual[])
   {
-   UnitTest::AssertEquals("Test",message,expected,ac actual);
+   UnitTest::AssertEquals("Test",message,expected,actual);
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
