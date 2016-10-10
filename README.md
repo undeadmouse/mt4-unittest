@@ -44,8 +44,8 @@ Usage Sample
 ```
 ----------------
 ```cpp
-   UnitTest::AssertEquals("1 should be 1",1,1);
+   AssertEquals("1 should be 1",1,1);
    int expected[] = {1,2,3};
    int actual[] = {1,2,3};
-   UnitTest::AssertEquals("array should be equal", expected, actual);
+   AssertEquals("array should be equal", expected, actual);
 ```
