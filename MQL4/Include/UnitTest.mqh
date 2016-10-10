@@ -49,17 +49,11 @@ public:
 
    void              fail(string name,string message);
    template<typename T>
+   static bool       isEqualTo(string type,T a,T b);
+   template<typename T>
    void              assertEquals(string message,T expected,T actual);
    template<typename T>
    void              assertEquals(string message,const T &expected[],const T &actual[]);
-   template<typename T>
-   static void       AssertEquals(string name,string message,T expected,T actual);
-   template<typename T>
-   static void       AssertEquals(string message,const T &expected[],const T &actual[]);
-   template<typename T>
-   static void       AssertEquals(string message,T expected,T actual);
-   template<typename T>
-   static void       AssertEquals(string name,string message,const T &expected[],const T &actual[]);
 private:
    int               m_allTestCount;
    int               m_successTestCount;
@@ -75,8 +69,6 @@ private:
    void              clearTestList();
 
    bool              assertArraySize(string name,string message,const int expectedSize,const int actualSize);
-   template<typename T>
-   static bool       isEqualTo(string type,T a,T b);
   };
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -286,8 +278,8 @@ void UnitTest::assertEquals(string message,const T &expected[],const T &actual[]
      {
       if(!UnitTest::isEqualTo(typename(T),expected[i],actual[i]))
         {
-         string m=message + ": expected array[" + (string)i + "] is <";
-         m= m + (string)expected[i] + "> but <" + (string)actual[i] + ">";
+         string m=message+": expected array["+(string)i+"] is <";
+         m=m+(string)expected[i]+"> but <"+(string)actual[i]+">";
          setFailure(name,m);
          Alert("Test failed: "+name+": "+m);
          return;
@@ -298,10 +290,19 @@ void UnitTest::assertEquals(string message,const T &expected[],const T &actual[]
 
   }
 //+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void UnitTest::fail(string name,string message)
+  {
+   setFailure(name,message);
+   Alert("Test faied: "+name+": "+message);
+  }
+//+------------------------------------------------------------------+
+//+------------------------------------------------------------------+
 //| Template assertEquals                                           |
 //+------------------------------------------------------------------+
 template<typename T>
-static void UnitTest::AssertEquals(string name,string message,T expected,T actual)
+void AssertEquals(string name,string message,T expected,T actual)
   {
    if(UnitTest::isEqualTo(typename(T),expected,actual))
      {
@@ -319,7 +320,7 @@ static void UnitTest::AssertEquals(string name,string message,T expected,T actua
 //|                                                                  |
 //+------------------------------------------------------------------+
 template<typename T>
-static void UnitTest::AssertEquals(string name,string message,const T &expected[],const T &actual[])
+void AssertEquals(string name,string message,const T &expected[],const T &actual[])
   {
 //assertEquals(name,message,expected,actual);
    const int expectedSize=ArraySize(expected);
@@ -336,8 +337,8 @@ static void UnitTest::AssertEquals(string name,string message,const T &expected[
      {
       if(!UnitTest::isEqualTo(typename(T),expected[i],actual[i]))
         {
-         string m=message + ": expected array[" + (string)i + "] is <";
-         m=m + (string)expected[i] + "> but <" + (string)actual[i] + ">";
+         string m=message+": expected array["+(string)i+"] is <";
+         m=m+(string)expected[i]+"> but <"+(string)actual[i]+">";
          PrintFormat("%s: NG: %s",name,m);
          Alert("Test failed: "+name+": "+m);
          return;
@@ -350,24 +351,16 @@ static void UnitTest::AssertEquals(string name,string message,const T &expected[
 //| Template assertEquals                                           |
 //+------------------------------------------------------------------+
 template<typename T>
-static void UnitTest::AssertEquals(string message,T expected,T actual)
+void AssertEquals(string message,T expected,T actual)
   {
-   UnitTest::AssertEquals("Test",message,expected,actual);
+   AssertEquals("Test",message,expected,actual);
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
 template<typename T>
-static void UnitTest::AssertEquals(string message,const T &expected[],const T &actual[])
+void AssertEquals(string message,const T &expected[],const T &actual[])
   {
-   UnitTest::AssertEquals("Test",message,expected,actual);
-  }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-void UnitTest::fail(string name,string message)
-  {
-   setFailure(name,message);
-   Alert("Test faied: "+name+": "+message);
+   AssertEquals("Test",message,expected,actual);
   }
 //+------------------------------------------------------------------+
